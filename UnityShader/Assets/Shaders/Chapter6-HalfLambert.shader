@@ -48,7 +48,7 @@
 				fixed3 worldNormal = normalize(i.worldNormal);
 
 				fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
-
+				// 半兰伯特模型：一般为(a(n*l)+b),此为0.5，0.5
 				fixed halfLambert = dot(worldNormal,worldLightDir)*0.5+0.5;
 
 				fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * halfLambert;

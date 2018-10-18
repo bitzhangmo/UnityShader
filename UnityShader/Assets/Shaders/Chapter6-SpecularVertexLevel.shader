@@ -1,11 +1,10 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-Shader "Custom/Chapter6-SpecularVertexLevel" {
+﻿Shader "Custom/Chapter6-SpecularVertexLevel" {
 	Properties
 	{
 		_Diffuse("Diffuse",Color) = (1,1,1,1)
+		// 控制材质的高光反射颜色
 		_Specular("Specular",Color) = (1,1,1,1)
+		// 控制高光区域的大小
 		_Gloss("Gloss",Range(8.0,256)) = 20
 	}
 
@@ -50,11 +49,11 @@ Shader "Custom/Chapter6-SpecularVertexLevel" {
 				fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
 
 				fixed3 diffuse = _LightColor0.rgb* _Diffuse.rgb *saturate(dot(worldNormal,worldLightDir));
-
+				// 反射光照
 				fixed3 reflectDir = normalize(reflect(-worldLightDir,worldNormal));
-
+				// 视线方向：从顶点到视点
 				fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(unity_ObjectToWorld,v.vertex).xyz);
-
+				// 高光颜色
 				fixed3 specular = _LightColor0.rgb*pow(saturate(dot(reflectDir,viewDir)),_Gloss);
 
 				o.color = ambient + diffuse + specular;

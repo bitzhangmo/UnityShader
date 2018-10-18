@@ -1,5 +1,5 @@
 ﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
+// 对于细分程度较低的模型，逐顶点光照容易出现一些视觉问题。
 Shader "Custom/Chapter6-DiffuseVertexLevel" {
 	Properties
 	{
