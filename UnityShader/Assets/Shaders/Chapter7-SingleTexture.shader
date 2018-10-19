@@ -54,7 +54,7 @@ Shader "Custom/Chapter7-SingleTexture" {
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				o.worldPos = mul(unity_ObjectToWorld,v.vertex).xyz;
-
+				// 缩放加偏移
 				o.uv = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
 
 				return o;
@@ -64,7 +64,7 @@ Shader "Custom/Chapter7-SingleTexture" {
 			{
 				fixed3 worldNormal = normalize(i.worldNormal);
 				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
-
+				// 反射率
 				fixed3 albedo = tex2D(_MainTex,i.uv).rgb * _Color.rgb;
 
 				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
