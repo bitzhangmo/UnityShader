@@ -58,10 +58,10 @@
 
 				o.uv.xy = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
 				o.uv.zw = v.texcoord.xy * _BumpMap_ST.xy + _BumpMap_ST.zw;
-				// 副切线
-				float3 binormal = cross(normalize(v.normal),normalize(v.tangent.xyz))*v.tangent.w;
+				// 副切线：法线与切线方向叉乘，方向性取决于切线的w分量
+				float3 binormal = cross(normalize(v.normal),normalize(v.tangent.xyz)) * v.tangent.w;
 
-				// 从模型空间到切线空间的变换矩阵：
+				// 从模型空间到切线空间的变换矩阵：行排列
 				float3x3 rotation = float3x3(v.tangent.xyz,binormal,v.normal);
 
 				o.lightDir = mul(rotation,ObjSpaceLightDir(v.vertex)).xyz;
