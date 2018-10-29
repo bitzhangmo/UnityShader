@@ -5,7 +5,9 @@
 		_MainTex("Main Tex",2D) = "white" {}
 		_BumpTex("Bump Tex",2D) = "bump" {}
 		_BumpScale("Bump Scale",Float) = 1.0
+		// 高光反射遮罩纹理
 		_SpecularMask("Specular Mask",2D) = "white" {}
+		// 控制遮罩影响度的系数
 		_SpecularScale("Specular Scale",Float) = 1.0
 		_Specular("Specular",Color) = (1,1,1,1)
 		_Gloss("Gloss",Range(8.0,256)) = 20
@@ -80,7 +82,7 @@
 				fixed3 diffuse = _LightColor0.rgb * albedo * max(0,dot(tangentNormal,tangentLightDir));
 
 				fixed3 halfDir = normalize(tangentLightDir + tangentViewDir);
-
+				// 对遮罩纹理进行采样，使用r分量来计算掩码值，最后与缩放相乘，共同控制高光反射的强度
 				fixed specularMask = tex2D(_SpecularMask,i.uv).r * _SpecularScale;
 
 				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0,dot(tangentNormal,halfDir)),_Gloss) * specularMask;
