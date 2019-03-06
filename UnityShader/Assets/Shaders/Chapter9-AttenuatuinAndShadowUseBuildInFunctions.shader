@@ -1,11 +1,4 @@
-﻿// Upgrade NOTE: replaced '_LightMatrix0' with 'unity_WorldToLight'
-
-// Upgrade NOTE: replaced '_LightMatrix0' with 'unity_WorldToLight'
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Custom/Chapter9-ForwardRendering" {
+﻿Shader "Custom/Chapter9-AttenuatuinAndShadowUseBuildInFunctions" {
 	Properties{
 		_Diffuse("Diffuse",Color) = (1,1,1,1)
 		_Specular("Specular",Color) = (1,1,1,1)
@@ -19,10 +12,11 @@ Shader "Custom/Chapter9-ForwardRendering" {
 
 			CGPROGRAM
 
-			#pragma multi_compilr_fwdbase
+			#pragma multi_compile_fwdbase
 			#pragma vertex vert
 			#pragma fragment frag
 
+			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
 			
 			fixed4 _Diffuse;
@@ -37,6 +31,7 @@ Shader "Custom/Chapter9-ForwardRendering" {
 				float4 pos : SV_POSITION;
 				float3 worldNormal : TEXCOORD0;
 				float3 worldPos : TEXCOORD1;
+				SHADOW_COORDS(2)
 			};
 
 			v2f vert(a2v v)
@@ -47,7 +42,7 @@ Shader "Custom/Chapter9-ForwardRendering" {
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				
 				o.worldPos = mul(unity_ObjectToWorld,v.vertex).xyz;
-
+				TRANSFER_SHADOW(o);
 				return o;
 			}
 			fixed4 frag(v2f i) : SV_Target {
@@ -60,7 +55,9 @@ Shader "Custom/Chapter9-ForwardRendering" {
 				fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
 				fixed3 halfDir = normalize(worldLightDir + viewDir);
 				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0,dot(worldNormal,halfDir)),_Gloss);
-				fixed atten = 1.0;
+				//fixed atten = 1.0;
+				//fixed shadow = SHADOW_ATTENUATION(i);
+				UNITY_LIGHT_ATTENUATION(atten,i,i.worldPos);
 				return fixed4 (ambient + (diffuse + specular) * atten,1.0);
 			}
 			//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
@@ -99,11 +96,11 @@ Shader "Custom/Chapter9-ForwardRendering" {
 				o.worldNormal = normalize(mul(v.normal,(float3x3)unity_WorldToObject));
 				
 				o.worldPos = mul(unity_ObjectToWorld,v.vertex).xyz;
-
+				//TRANSFER_SHADOW(o);
 				return o;
 			}
 			fixed4 frag(v2f i) : SV_Target {
-				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
+				//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
 				fixed3 worldNormal = normalize(i.worldNormal);
 				#ifdef USING_DIRECTIONAL_LIGHT
 					fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
@@ -122,6 +119,7 @@ Shader "Custom/Chapter9-ForwardRendering" {
 					float3 lightCoord = mul(unity_WorldToLight,float4(i.worldPos,1)).xyz;
 					fixed atten = tex2D(_LightTexture0,dot(lightCoord,lightCoord).rr).UNITY_ATTEN_CHANNEL;
 				#endif
+				//fixed shadow = SHADOW_ATTENUATION(i);
 				return fixed4 ((diffuse + specular) * atten,1.0);
 			}
 
@@ -130,4 +128,4 @@ Shader "Custom/Chapter9-ForwardRendering" {
 	}
 
 	Fallback "Specular"
-}	
+}
