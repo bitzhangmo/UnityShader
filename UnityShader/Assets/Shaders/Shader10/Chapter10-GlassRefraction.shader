@@ -12,11 +12,10 @@
 		_RefractAmount ("Refract Amount",Range(0.0,1.0)) = 1.0
 	}
 	SubShader {
-
+		// 必须使用transparent来使得其他的物体在此之前渲染
 		Tags { "Queue" = "Transparent" "RenderType" = "Opaque" }
-
-
-
+		
+		// 将屏幕图像抓取后存储在名为“_RefractionTex”的纹理中备用
 		GrabPass { "_RefractionTex" }
 
 		Pass{
@@ -35,6 +34,7 @@
 			float _Distortion;
 			fixed _RefractAmount;
 			sampler2D _RefractionTex;
+			// 纹理的纹素大小
 			float4 _RefractionTex_TexelSize;
 
 			struct a2v{
